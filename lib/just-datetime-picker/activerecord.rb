@@ -13,20 +13,20 @@ module Just
 
       def self.included(mod)
         mod.extend(ClassMethods)
-      end    
-      
+      end
+
       module ClassMethods
         def just_define_datetime_picker(field_name, options = {})
           include ::Just::DateTime::ActiveRecord::InstanceMethods
-          
+
           attr_reader "#{field_name}_time_hour"
           attr_reader "#{field_name}_time_minute"
-          
+
           validates "#{field_name}_date",        :just_date => true, :allow_nil => true, :allow_blank => false
           validates "#{field_name}_time_hour",   :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 23, :message => :just_datetime_invalid_time_hour }, :allow_nil => true, :allow_blank => false
           validates "#{field_name}_time_minute", :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 59, :message => :just_datetime_invalid_time_minute }, :allow_nil => true, :allow_blank => false
 
-          after_validation do 
+          after_validation do
             date_attribute   = "#{field_name}_date".to_sym
             hour_attribute   = "#{field_name}_time_hour".to_sym
             minute_attribute = "#{field_name}_time_minute".to_sym
@@ -36,15 +36,15 @@ module Just
             self.errors[hour_attribute].each{ |e| self.errors[field_name] << e }
             self.errors[minute_attribute].each{ |e| self.errors[field_name] << e }
             self.errors[date_attribute].each{ |e| self.errors[field_name] << e }
-            
+
             self.errors[field_name].uniq!
-          end          
+          end
 
 
           define_method "#{field_name}_date" do
             return instance_variable_get("@#{field_name}_date") if instance_variable_get("@#{field_name}_date")
             return nil if self.send(field_name).nil?
-            
+
             self.send(field_name).to_date.to_s
           end
 
@@ -57,21 +57,21 @@ module Just
             instance_variable_set("@#{field_name}_time_hour", v.to_i)
             just_combine_datetime field_name
           end
-          
+
           define_method "#{field_name}_time_minute=" do |v|
             instance_variable_set("@#{field_name}_time_minute", v.to_i)
             just_combine_datetime field_name
           end
-          
-          
+
+
           if options.has_key? :add_to_attr_accessible and options[:add_to_attr_accessible] == true
             attr_accessible "#{field_name}_date".to_sym, "#{field_name}_time_hour".to_sym, "#{field_name}_time_minute".to_sym
           end
         end # just_define_datetime_picker
-        
+
       end # ClassMethods
 
-      
+
       module InstanceMethods
         protected
         def just_combine_datetime(field_name)
@@ -86,8 +86,8 @@ module Just
             end
           end
 
-        end          
-      
+        end
+
       end # InstanceMethods
     end
   end

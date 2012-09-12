@@ -17,9 +17,9 @@ module JustDatetimePicker
           attr_reader "#{field_name}_time_hour"
           attr_reader "#{field_name}_time_minute"
 
-          validates "#{field_name}_date",        :just_date => true, :allow_nil => true, :allow_blank => false
-          validates "#{field_name}_time_hour",   :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 23, :message => :just_datetime_invalid_time_hour }, :allow_nil => true, :allow_blank => false
-          validates "#{field_name}_time_minute", :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 59, :message => :just_datetime_invalid_time_minute }, :allow_nil => true, :allow_blank => false
+          validates "#{field_name}_date",        :just_date => true, :allow_nil => true, :allow_blank => true
+          validates "#{field_name}_time_hour",   :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 23, :message => :just_datetime_invalid_time_hour }, :allow_nil => true, :allow_blank => true
+          validates "#{field_name}_time_minute", :numericality => { :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 59, :message => :just_datetime_invalid_time_minute }, :allow_nil => true, :allow_blank => true
 
           after_validation do
             date_attribute   = "#{field_name}_date".to_sym
@@ -49,12 +49,12 @@ module JustDatetimePicker
           end
 
           define_method "#{field_name}_time_hour=" do |v|
-            instance_variable_set("@#{field_name}_time_hour", v.to_i)
+            instance_variable_set("@#{field_name}_time_hour", v)
             just_combine_datetime field_name
           end
 
           define_method "#{field_name}_time_minute=" do |v|
-            instance_variable_set("@#{field_name}_time_minute", v.to_i)
+            instance_variable_set("@#{field_name}_time_minute", v)
             just_combine_datetime field_name
           end
 
@@ -69,7 +69,7 @@ module JustDatetimePicker
         def just_combine_datetime(field_name)
           if not instance_variable_get("@#{field_name}_date").nil? and not instance_variable_get("@#{field_name}_time_hour").nil? and not instance_variable_get("@#{field_name}_time_minute").nil?
 
-            combined = "#{instance_variable_get("@#{field_name}_date")} #{sprintf("%02d", instance_variable_get("@#{field_name}_time_hour"))}:#{sprintf("%02d", instance_variable_get("@#{field_name}_time_minute"))}:00"
+            combined = "#{instance_variable_get("@#{field_name}_date")} #{instance_variable_get("@#{field_name}_time_hour")}:#{instance_variable_get("@#{field_name}_time_minute")}:00"
             begin
               self.send("#{field_name}=", Time.zone.parse(combined))
 

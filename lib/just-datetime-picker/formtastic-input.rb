@@ -1,19 +1,19 @@
 module Formtastic
   module Inputs
-    class JustDatetimePickerInput 
+    class JustDatetimePickerInput
       include ::Formtastic::Inputs::Base
 
       def to_html
         input_wrapping do
           combined_value = builder.object.send(method)
-          
+
           hour_value_raw = builder.object.send("#{method}_time_hour")
           if not hour_value_raw.nil?
             hour_value = hour_value_raw
           elsif not combined_value.nil?
             hour_value = combined_value.hour
-          else
-            hour_value = "00"
+          # else
+          #   hour_value = nil
           end
 
           minute_value_raw = builder.object.send("#{method}_time_minute")
@@ -21,13 +21,13 @@ module Formtastic
             minute_value = minute_value_raw
           elsif not combined_value.nil?
             minute_value = combined_value.min
-          else
-            minute_value = "00"
+          # else
+          #   minute_value = nil
           end
 
-          hour_value   = sprintf("%02d", hour_value)
-          minute_value = sprintf("%02d", minute_value)
-          
+          # hour_value   = sprintf("%02d", hour_value) unless hour_value.nil?
+          # minute_value = sprintf("%02d", minute_value) unless minute_value.nil?
+
           label_html <<
           builder.text_field("#{method}_date", input_html_options.merge({ :class => "just-datetime-picker-field just-datetime-picker-date datepicker", :value => builder.object.send("#{method}_date"), :maxlength => 10, :size => 10 })) <<
 
